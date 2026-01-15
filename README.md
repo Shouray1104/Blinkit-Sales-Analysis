@@ -3,6 +3,7 @@
 ## Overview
 This project analyzes Blinkit’s sales dataset to generate actionable insights and visualize trends. The workflow combines **SQL** for data cleaning and aggregation, **Python** for exploratory data analysis (EDA), and **Power BI** for creating an interactive dashboard. The goal is to identify patterns in sales, product performance, customer behavior, and outlet-level metrics to support data-driven decision-making.
 
+
 ---
 
 ## Key Insights
