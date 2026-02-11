@@ -11,17 +11,17 @@ st.set_page_config(
 )
 
 # -------------------------------------------------
-# Custom Blinkit Theme Styling
+# Blinkit Yellow + Green Theme
 # -------------------------------------------------
 st.markdown("""
     <style>
     .stApp {
-        background-color: #000000;
+        background-color: #121212;
         color: white;
     }
 
     section[data-testid="stSidebar"] {
-        background-color: #1C1C1C;
+        background-color: #1E1E1E;
     }
 
     h1, h2, h3 {
@@ -29,14 +29,19 @@ st.markdown("""
     }
 
     div[data-testid="metric-container"] {
-        background-color: #1C1C1C;
-        border: 1px solid #F7C600;
+        background: linear-gradient(135deg, #00B761, #0E8F4D);
         padding: 15px;
-        border-radius: 10px;
+        border-radius: 12px;
+        color: white;
     }
 
     div[data-testid="metric-container"] > label {
         color: #F7C600;
+        font-weight: bold;
+    }
+
+    .stSelectbox label, .stMultiSelect label {
+        color: #F7C600 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -45,7 +50,7 @@ st.markdown("""
 # Title
 # -------------------------------------------------
 st.markdown(
-    "<h1 style='text-align: center; color: #F7C600;'>BlinkIT Sales Analysis Dashboard</h1>",
+    "<h1 style='text-align:center; color:#F7C600;'>BlinkIT Sales Analysis Dashboard</h1>",
     unsafe_allow_html=True
 )
 
@@ -58,13 +63,11 @@ st.markdown("---")
 def load_data():
     df = pd.read_csv("BlinkIT_Grocery_Data.csv")
 
-    # Clean column names
     df.columns = df.columns.str.strip()
     df.columns = df.columns.str.replace(" ", "_")
     df.columns = df.columns.str.replace("-", "_")
     df.columns = df.columns.str.lower()
 
-    # Clean Fat Content
     if "item_fat_content" in df.columns:
         df["item_fat_content"] = df["item_fat_content"].replace({
             "LF": "Low Fat",
@@ -120,16 +123,14 @@ if "item_fat_content" in df.columns:
         names="item_fat_content",
         values="sales",
         title="Sales by Fat Content",
-        color_discrete_sequence=["#F7C600", "#FFD84D"]
+        color_discrete_sequence=["#F7C600", "#00B761"]
     )
     fig1.update_layout(
-        plot_bgcolor="#000000",
-        paper_bgcolor="#000000",
+        plot_bgcolor="#121212",
+        paper_bgcolor="#121212",
         font_color="white"
     )
-
     st.plotly_chart(fig1, use_container_width=True)
-
 
 # 2. Sales by Item Type
 if "item_type" in df.columns:
@@ -141,16 +142,14 @@ if "item_type" in df.columns:
         x="item_type",
         y="sales",
         title="Total Sales by Item Type",
-        color_discrete_sequence=["#F7C600"]
+        color_discrete_sequence=["#00B761"]
     )
     fig2.update_layout(
-        plot_bgcolor="#000000",
-        paper_bgcolor="#000000",
+        plot_bgcolor="#121212",
+        paper_bgcolor="#121212",
         font_color="white"
     )
-
     st.plotly_chart(fig2, use_container_width=True)
-
 
 # 3. Sales by Outlet Location
 if "outlet_location_type" in df.columns:
@@ -164,13 +163,11 @@ if "outlet_location_type" in df.columns:
         color_discrete_sequence=["#F7C600"]
     )
     fig3.update_layout(
-        plot_bgcolor="#000000",
-        paper_bgcolor="#000000",
+        plot_bgcolor="#121212",
+        paper_bgcolor="#121212",
         font_color="white"
     )
-
     st.plotly_chart(fig3, use_container_width=True)
-
 
 # 4. Sales by Establishment Year
 if "outlet_establishment_year" in df.columns:
@@ -183,13 +180,12 @@ if "outlet_establishment_year" in df.columns:
         title="Sales by Outlet Establishment Year",
         markers=True
     )
-    fig4.update_traces(line_color="#F7C600")
+    fig4.update_traces(line_color="#00B761")
     fig4.update_layout(
-        plot_bgcolor="#000000",
-        paper_bgcolor="#000000",
+        plot_bgcolor="#121212",
+        paper_bgcolor="#121212",
         font_color="white"
     )
-
     st.plotly_chart(fig4, use_container_width=True)
 
 # -------------------------------------------------
