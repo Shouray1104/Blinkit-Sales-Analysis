@@ -1,111 +1,162 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
-df = pd.read_csv("BlinkIT Grocery Data Excel.csv")
+# ---------------------------
+# Page Configuration
+# ---------------------------
+st.set_page_config(
+    page_title="Blinkit Grocery Sales Dashboard",
+    layout="wide"
+)
 
-st.write("Column Names:")
-st.write(df.columns)
+st.title("Blinkit Grocery Sales Dashboard")
+st.markdown("Interactive Sales Analysis using Streamlit and Plotly")
 
+# ---------------------------
+# Load Data
+# ---------------------------
+@st.cache_data
+def load_data():
+    df = pd.read_csv("BlinkIT_Grocery_Data_Excel.csv")
+    return df
 
+df = load_data()
 
-
-
-
-
-
-#import streamlit as st
-#import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-st.set_page_config(page_title="Blinkit Sales Dashboard", layout="wide")
-
-st.title("🛒 Blinkit Sales Analysis Dashboard")
-
-# Load dataset (Make sure CSV is in same folder as app.py)
-df = pd.read_csv("BlinkIT Grocery Data Excel.csv")
-
-# -------------------- DATA CLEANING --------------------
+# ---------------------------
+# Data Cleaning
+# ---------------------------
 df['Item_Fat_Content'] = df['Item_Fat_Content'].replace({
     'LF': 'Low Fat',
     'low fat': 'Low Fat',
     'reg': 'Regular'
 })
 
-# -------------------- KPIs --------------------
-st.subheader("📊 Key Business Metrics")
+# ---------------------------
+# Sidebar Filters
+# ---------------------------
+st.sidebar.header("Filters")
 
-total_sales = df['Sales'].sum()
-average_sales = df['Sales'].mean()
-no_of_item_sold = df['Sales'].count()
-average_rating = df['Rating'].mean()
+outlet = st.sidebar.multiselect(
+    "Select Outlet Type",
+    options=df['Outlet_Type'].unique(),
+    default=df['Outlet_Type'].unique()
+)
+
+item_type = st.sidebar.multiselect(
+    "Select Item Type",
+    options=df['Item_Type'].unique(),
+    default=df['Item_Type'].unique()
+)
+
+filtered_df = df[
+    (df['Outlet_Type'].isin(outlet)) &
+    (df['Item_Type'].isin(item_type))
+]
+
+# ---------------------------
+# KPI Section
+# ---------------------------
+total_sales = filtered_df['Item_Outlet_Sales'].sum()
+avg_sales = filtered_df['Item_Outlet_Sales'].mean()
+total_items = filtered_df.shape[0]
+avg_rating = filtered_df['Rating'].mean() if 'Rating' in filtered_df.columns else 0
 
 col1, col2, col3, col4 = st.columns(4)
 
-col1.metric("Total Sales", f"₹ {total_sales:,.0f}")
-col2.metric("Average Sales", f"₹ {average_sales:,.0f}")
-col3.metric("Items Sold", f"{no_of_item_sold:,}")
-col4.metric("Average Rating", f"{average_rating:.1f}")
+col1.metric("Total Sales", f"${total_sales:,.0f}")
+col2.metric("Average Sales", f"${avg_sales:,.0f}")
+col3.metric("Total Items", total_items)
+col4.metric("Average Rating", f"{avg_rating:.1f}")
 
 st.markdown("---")
 
-# -------------------- CHART 1 --------------------
+# ---------------------------
+# Sales by Outlet Type
+# ---------------------------
+st.subheader("Sales by Outlet Type")
+
+sales_by_outlet = (
+    filtered_df
+    .groupby("Outlet_Type")["Item_Outlet_Sales"]
+    .sum()
+    .reset_index()
+)
+
+fig1 = px.bar(
+    sales_by_outlet,
+    x="Outlet_Type",
+    y="Item_Outlet_Sales",
+    color="Outlet_Type",
+    text_auto=True
+)
+
+st.plotly_chart(fig1, use_container_width=True)
+
+# ---------------------------
+# Sales by Item Type
+# ---------------------------
+st.subheader("Sales by Item Type")
+
+sales_by_item = (
+    filtered_df
+    .groupby("Item_Type")["Item_Outlet_Sales"]
+    .sum()
+    .reset_index()
+)
+
+fig2 = px.bar(
+    sales_by_item,
+    x="Item_Type",
+    y="Item_Outlet_Sales",
+    color="Item_Type"
+)
+
+st.plotly_chart(fig2, use_container_width=True)
+
+# ---------------------------
+# Sales by Fat Content
+# ---------------------------
 st.subheader("Sales by Fat Content")
 
-sales_by_fat = df.groupby('Item Fat Content')['Sales'].sum()
+fat_sales = (
+    filtered_df
+    .groupby("Item_Fat_Content")["Item_Outlet_Sales"]
+    .sum()
+    .reset_index()
+)
 
-fig1, ax1 = plt.subplots()
-ax1.pie(sales_by_fat, labels=sales_by_fat.index,
-        autopct='%.1f%%', startangle=90)
-ax1.axis("equal")
-st.pyplot(fig1)
+fig3 = px.pie(
+    fat_sales,
+    names="Item_Fat_Content",
+    values="Item_Outlet_Sales"
+)
 
-# -------------------- CHART 2 --------------------
-st.subheader("Total Sales by Item Type")
+st.plotly_chart(fig3, use_container_width=True)
 
-sales_by_type = df.groupby('Item Type')['Sales'].sum().sort_values(ascending=False)
+# ---------------------------
+# Sales by Outlet Location
+# ---------------------------
+st.subheader("Sales by Outlet Location Type")
 
-fig2, ax2 = plt.subplots(figsize=(10,5))
-sales_by_type.plot(kind='bar', ax=ax2)
-plt.xticks(rotation=90)
-st.pyplot(fig2)
+location_sales = (
+    filtered_df
+    .groupby("Outlet_Location_Type")["Item_Outlet_Sales"]
+    .sum()
+    .reset_index()
+)
 
-# -------------------- CHART 3 --------------------
-st.subheader("Outlet Tier by Item Fat Content")
+fig4 = px.bar(
+    location_sales,
+    x="Outlet_Location_Type",
+    y="Item_Outlet_Sales",
+    color="Outlet_Location_Type"
+)
 
-grouped = df.groupby(['Outlet Location Type', 'Item Fat Content'])['Sales'].sum().unstack()
-grouped = grouped[['Regular', 'Low Fat']]
+st.plotly_chart(fig4, use_container_width=True)
 
-fig3, ax3 = plt.subplots()
-grouped.plot(kind='bar', ax=ax3)
-st.pyplot(fig3)
-
-# -------------------- CHART 4 --------------------
-st.subheader("Sales by Outlet Establishment Year")
-
-sales_by_year = df.groupby('Outlet Establishment Year')['Sales'].sum().sort_index()
-
-fig4, ax4 = plt.subplots()
-ax4.plot(sales_by_year.index, sales_by_year.values, marker='o')
-st.pyplot(fig4)
-
-# -------------------- CHART 5 --------------------
-st.subheader("Sales by Outlet Size")
-
-sales_by_size = df.groupby('Outlet Size')['Sales'].sum()
-
-fig5, ax5 = plt.subplots()
-ax5.pie(sales_by_size, labels=sales_by_size.index,
-        autopct='%1.1f%%', startangle=90)
-ax5.axis("equal")
-st.pyplot(fig5)
-
-# -------------------- CHART 6 --------------------
-st.subheader("Total Sales by Outlet Location Type")
-
-sales_by_location = df.groupby('Outlet Location Type')['Sales'].sum().reset_index()
-sales_by_location = sales_by_location.sort_values('Sales', ascending=False)
-
-fig6, ax6 = plt.subplots()
-sns.barplot(x='Sales', y='Outlet Location Type', data=sales_by_location, ax=ax6)
-st.pyplot(fig6)
+# ---------------------------
+# Raw Data Section
+# ---------------------------
+if st.checkbox("Show Raw Data"):
+    st.dataframe(filtered_df)
