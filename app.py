@@ -8,7 +8,7 @@ st.set_page_config(page_title="Blinkit Sales Dashboard", layout="wide")
 st.title("🛒 Blinkit Sales Analysis Dashboard")
 
 # Load dataset (Make sure CSV is in same folder as app.py)
-df = pd.read_csv("BlinkIT-Grocery-Data2.csv")
+df = pd.read_csv("BlinkIT Grocery Data Excel.csv")
 
 # -------------------- DATA CLEANING --------------------
 df['Item Fat Content'] = df['Item Fat Content'].replace({
