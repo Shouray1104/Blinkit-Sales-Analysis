@@ -11,7 +11,7 @@ st.title("🛒 Blinkit Sales Analysis Dashboard")
 df = pd.read_csv("BlinkIT Grocery Data Excel.csv")
 
 # -------------------- DATA CLEANING --------------------
-df['Item Fat Content'] = df['Item Fat Content'].replace({
+df['Item_Fat_Content'] = df['Item_Fat_Content'].replace({
     'LF': 'Low Fat',
     'low fat': 'Low Fat',
     'reg': 'Regular'
