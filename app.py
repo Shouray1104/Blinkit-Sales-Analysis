@@ -1,5 +1,20 @@
 import streamlit as st
 import pandas as pd
+
+df = pd.read_csv("BlinkIT Grocery Data Excel.csv")
+
+st.write("Column Names:")
+st.write(df.columns)
+
+
+
+
+
+
+
+
+#import streamlit as st
+#import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
