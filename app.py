@@ -2,161 +2,91 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# ---------------------------
-# Page Configuration
-# ---------------------------
-st.set_page_config(
-    page_title="Blinkit Grocery Sales Dashboard",
-    layout="wide"
-)
+st.set_page_config(page_title="BlinkIT Sales Dashboard", layout="wide")
 
-st.title("Blinkit Grocery Sales Dashboard")
-st.markdown("Interactive Sales Analysis using Streamlit and Plotly")
+st.title("BlinkIT Sales Analysis Dashboard")
 
-# ---------------------------
 # Load Data
-# ---------------------------
 @st.cache_data
 def load_data():
     df = pd.read_csv("BlinkIT_Grocery_Data_Excel.csv")
+
+    # Clean column names
+    df.columns = df.columns.str.strip()
+    df.columns = df.columns.str.replace(" ", "_")
+    df.columns = df.columns.str.replace("-", "_")
+    df.columns = df.columns.str.lower()
+
     return df
 
 df = load_data()
 
-# ---------------------------
-# Data Cleaning
-# ---------------------------
-df['Item_Fat_Content'] = df['Item_Fat_Content'].replace({
-    'LF': 'Low Fat',
-    'low fat': 'Low Fat',
-    'reg': 'Regular'
-})
+# Standardize Item Fat Content if column exists
+if "item_fat_content" in df.columns:
+    df["item_fat_content"] = df["item_fat_content"].replace({
+        "LF": "Low Fat",
+        "low fat": "Low Fat",
+        "reg": "Regular"
+    })
 
-# ---------------------------
 # Sidebar Filters
-# ---------------------------
 st.sidebar.header("Filters")
 
-outlet = st.sidebar.multiselect(
-    "Select Outlet Type",
-    options=df['Outlet_Type'].unique(),
-    default=df['Outlet_Type'].unique()
-)
+if "outlet_location_type" in df.columns:
+    location_filter = st.sidebar.multiselect(
+        "Select Outlet Location Type",
+        options=df["outlet_location_type"].unique(),
+        default=df["outlet_location_type"].unique()
+    )
+    df = df[df["outlet_location_type"].isin(location_filter)]
 
-item_type = st.sidebar.multiselect(
-    "Select Item Type",
-    options=df['Item_Type'].unique(),
-    default=df['Item_Type'].unique()
-)
+if "item_type" in df.columns:
+    item_filter = st.sidebar.multiselect(
+        "Select Item Type",
+        options=df["item_type"].unique(),
+        default=df["item_type"].unique()
+    )
+    df = df[df["item_type"].isin(item_filter)]
 
-filtered_df = df[
-    (df['Outlet_Type'].isin(outlet)) &
-    (df['Item_Type'].isin(item_type))
-]
-
-# ---------------------------
 # KPI Section
-# ---------------------------
-total_sales = filtered_df['Item_Outlet_Sales'].sum()
-avg_sales = filtered_df['Item_Outlet_Sales'].mean()
-total_items = filtered_df.shape[0]
-avg_rating = filtered_df['Rating'].mean() if 'Rating' in filtered_df.columns else 0
+col1, col2, col3 = st.columns(3)
 
-col1, col2, col3, col4 = st.columns(4)
+if "item_outlet_sales" in df.columns:
+    total_sales = df["item_outlet_sales"].sum()
+    avg_sales = df["item_outlet_sales"].mean()
+else:
+    total_sales = 0
+    avg_sales = 0
 
-col1.metric("Total Sales", f"${total_sales:,.0f}")
-col2.metric("Average Sales", f"${avg_sales:,.0f}")
-col3.metric("Total Items", total_items)
-col4.metric("Average Rating", f"{avg_rating:.1f}")
+col1.metric("Total Sales", f"{total_sales:,.2f}")
+col2.metric("Average Sales", f"{avg_sales:,.2f}")
+col3.metric("Total Items", df.shape[0])
 
 st.markdown("---")
 
-# ---------------------------
-# Sales by Outlet Type
-# ---------------------------
-st.subheader("Sales by Outlet Type")
-
-sales_by_outlet = (
-    filtered_df
-    .groupby("Outlet_Type")["Item_Outlet_Sales"]
-    .sum()
-    .reset_index()
-)
-
-fig1 = px.bar(
-    sales_by_outlet,
-    x="Outlet_Type",
-    y="Item_Outlet_Sales",
-    color="Outlet_Type",
-    text_auto=True
-)
-
-st.plotly_chart(fig1, use_container_width=True)
-
-# ---------------------------
 # Sales by Item Type
-# ---------------------------
-st.subheader("Sales by Item Type")
+if "item_type" in df.columns and "item_outlet_sales" in df.columns:
+    sales_by_item = df.groupby("item_type")["item_outlet_sales"].sum().reset_index()
+    fig1 = px.bar(
+        sales_by_item,
+        x="item_type",
+        y="item_outlet_sales",
+        title="Sales by Item Type"
+    )
+    st.plotly_chart(fig1, use_container_width=True)
 
-sales_by_item = (
-    filtered_df
-    .groupby("Item_Type")["Item_Outlet_Sales"]
-    .sum()
-    .reset_index()
-)
-
-fig2 = px.bar(
-    sales_by_item,
-    x="Item_Type",
-    y="Item_Outlet_Sales",
-    color="Item_Type"
-)
-
-st.plotly_chart(fig2, use_container_width=True)
-
-# ---------------------------
-# Sales by Fat Content
-# ---------------------------
-st.subheader("Sales by Fat Content")
-
-fat_sales = (
-    filtered_df
-    .groupby("Item_Fat_Content")["Item_Outlet_Sales"]
-    .sum()
-    .reset_index()
-)
-
-fig3 = px.pie(
-    fat_sales,
-    names="Item_Fat_Content",
-    values="Item_Outlet_Sales"
-)
-
-st.plotly_chart(fig3, use_container_width=True)
-
-# ---------------------------
 # Sales by Outlet Location
-# ---------------------------
-st.subheader("Sales by Outlet Location Type")
+if "outlet_location_type" in df.columns and "item_outlet_sales" in df.columns:
+    sales_by_location = df.groupby("outlet_location_type")["item_outlet_sales"].sum().reset_index()
+    fig2 = px.pie(
+        sales_by_location,
+        names="outlet_location_type",
+        values="item_outlet_sales",
+        title="Sales Distribution by Outlet Location"
+    )
+    st.plotly_chart(fig2, use_container_width=True)
 
-location_sales = (
-    filtered_df
-    .groupby("Outlet_Location_Type")["Item_Outlet_Sales"]
-    .sum()
-    .reset_index()
-)
-
-fig4 = px.bar(
-    location_sales,
-    x="Outlet_Location_Type",
-    y="Item_Outlet_Sales",
-    color="Outlet_Location_Type"
-)
-
-st.plotly_chart(fig4, use_container_width=True)
-
-# ---------------------------
-# Raw Data Section
-# ---------------------------
-if st.checkbox("Show Raw Data"):
-    st.dataframe(filtered_df)
+# Data Preview
+st.markdown("---")
+st.subheader("Data Preview")
+st.dataframe(df.head())
