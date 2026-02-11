@@ -1,0 +1,77 @@
+KPI's Requirement,,,,,,,,Item Type,Sum of Total Sales
+Total Sales,Average Sales,Number of Items,Average Rating,,,,,Seafood,$9.1K
+1201681.493,140.9927834,8523,3.965857093,,,,,Breakfast,$15.6K
+,,,,,,,,Starchy Foods,$21.9K
+Total Sales,Avg Sales,No of Items,Avg Rating,,,,,Others,$22.5K
+$1.20M,$141,"8,523",4,,,,,Hard Drinks,$29.3K
+,,,,,,,,Breads,$35.4K
+,,,,,,,,Soft Drinks,$58.5K
+,,,,,,,,Meat,$59.4K
+Total Sales By Fat Content,,,,,,,,Health and Hygiene,$68.0K
+Item Fat Content,Sum of Total Sales,,,,,,,Baking Goods,$81.9K
+Low Fat,$776.3K,,,,,,,Canned,$90.7K
+Regular,$425.4K,,,,,,,Dairy,$101.3K
+,,,,,,,,Frozen Foods,$118.6K
+,,,,,,,,Household,$136.0K
+,,,,,,,,Snack Foods,$175.4K
+,,,,,,,,Fruits and Vegetables,$178.1K
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+Total Sales By Item Types,,,,,,,,,
+Sum of Total Sales,Item_Fat_Content,,,,,,,,
+Outlet Location Type,Regular,Low Fat,,,,,,,
+Tier 1,$121.3K,$215.0K,,,,,,,
+Tier 2,$138.7K,$254.5K,,,,,,,
+Tier 3,$165.3K,$306.8K,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+Total Sales By Outlet Size,,,,,,,,,
+,,,,,,,,,
+Outlet Size,Sum of Total Sales,,,,,,,,
+High,$249.0K,,,,,,,,
+Medium,$507.9K,,,,,,,,
+Small,$444.8K,,,,,,,,
+,,,,,,,,,
+,,,,,,,Total Sales by Outlet Establishment,,
+,,,,,,,,,
+Total Sales By Outlet Location Type,,,,,,,Outlet Establishment Year,Sum of Total Sales,
+,,,,,,,2011,$78.1K,
+Outlet Location Type,Sum of Total Sales,,,,,,2012,$130.5K,
+Tier 1,$336.4K,,,,,,2014,$131.8K,
+Tier 2,$393.2K,,,,,,2015,$130.9K,
+Tier 3,$472.1K,,,,,,2016,$132.1K,
+,,,,,,,2017,$133.1K,
+,,,,,,,2018,$204.5K,
+,,,,,,,2020,$129.1K,
+,,,,,,,2022,$131.5K,
+,Location,TotalSales,,,,,,,
+,Tier 1,$336.4K,,,,,,,
+,Tier 2,$393.2K,,,,,,,
+,Tier 3,$472.1K,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+,,,,,,,,,
+OUTLET TYPE,,,,,,,,,
+,,,,,,,,,
+Outlet Type,Sum of Total Sales,,,,,,,,
+Grocery Store,$151.9K,,,,,,,,
+Supermarket Type3,$130.7K,,,,,,,,
+Supermarket Type2,$131.5K,,,,,,,,
+Supermarket Type1,$787.5K,,,,,,,,
+,,,,,,,,,
+Outlet Type,Average of Sales,,,,,,,,
+Grocery Store,$140.3,,,,,,,,
+Supermarket Type3,$139.8,,,,,,,,
+Supermarket Type2,$141.7,,,,,,,,
+Supermarket Type1,$141.2,,,,,,,,
+,,,,,,,,,
+Outlet Type,No of Items,,,,,,,,
+Grocery Store,"1,083",,,,,,,,
+Supermarket Type3,935,,,,,,,,
+Supermarket Type2,928,,,,,,,,
+Supermarket Type1,"5,577",,,,,,,,
